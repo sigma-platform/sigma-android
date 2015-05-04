@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Sigma</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+    <string name="webservice">Localhost://</string>
+    <string name="PREFS_DATA">SP_Project</string>
+    <string name="title_activity_sign_in">SignInActivity</string>
+</resources>
