@@ -91,7 +91,7 @@ public class SignInActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... arg0) {
 
-            String api_URL = getString(R.string.webservice).concat("/auth/login");
+            String api_URL = getString(R.string.webservice).concat("/api/auth/login");
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(api_URL);
 
@@ -111,7 +111,7 @@ public class SignInActivity extends AppCompatActivity {
 
 
                 inscription = new JSONObject(reponse);
-                boolean error = inscription.getBoolean("succes");
+                boolean error = inscription.getBoolean("success");
                 if(error){
                     JSONObject jsonObj = inscription.getJSONObject("payload");
                     good = true;

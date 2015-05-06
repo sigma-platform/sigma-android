@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,8 +56,8 @@ public class NavigationDrawerFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public  void getData(){
-        jsonProjects = getArguments().getString("Projects");
+    private void getData(){
+        jsonProjects = ((SigmaApplication) getActivity().getApplication()).getJsonProjects();
         List<ProjectData> data = new ArrayList<>();
         int icons = R.mipmap.ic_launcher;
         String[] titles = null;
@@ -87,11 +88,15 @@ public class NavigationDrawerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         recyclerView = (RecyclerView) layout.findViewById(R.id.drawerList);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
         return layout;
     }
 
 
     public void setUp(int drawerId,DrawerLayout dr,Toolbar tool) {
+        getData();
         mDrawerLayout = dr;
         containerView = getActivity().findViewById(drawerId);
 
@@ -111,7 +116,6 @@ public class NavigationDrawerFragment extends Fragment {
                 }
                 getActivity().invalidateOptionsMenu();
             }
-
         };
         if(!mUserLearnedDrawer && mFromSavedInstanceState){
             mDrawerLayout.openDrawer(containerView);
@@ -131,12 +135,10 @@ public class NavigationDrawerFragment extends Fragment {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(preferencesName,preferenceValue);
         editor.apply();
-
     }
 
     public static String readFromPreference(Context context,String preferencesName,String preferenceValue){
         SharedPreferences sharedPref = context.getSharedPreferences(PREF_FILE_NAME,context.MODE_PRIVATE);
         return sharedPref.getString(preferencesName,preferenceValue);
-
     }
 }

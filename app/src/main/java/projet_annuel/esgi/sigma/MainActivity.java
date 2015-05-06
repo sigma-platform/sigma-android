@@ -68,14 +68,13 @@ public class MainActivity extends AppCompatActivity implements TaskDelegate {
             Intent intent = new Intent(MainActivity.this, SignInActivity.class);
             startActivity(intent);
         } else {
-            Bundle arguments = new Bundle();
-            arguments.putString("Projects",jsonProject);
+            SigmaApplication app = (SigmaApplication) getApplication();
+            app.setJsonProjects(jsonProject);
             NavigationDrawerFragment drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
-            drawerFragment.setArguments(arguments);
             drawerFragment.setUp(R.id.fragment_navigation_drawer,(DrawerLayout)findViewById(R.id.drawer_layout),toolbar);
 
-            getActionBar().setDisplayHomeAsUpEnabled(true);
-            getActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
 
             //ListTasks fragment = (ListTasks) getFragmentManager().findFragmentById(R.layout.fragment_list_task);
 
@@ -124,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements TaskDelegate {
 
 
             listJSON = new JSONObject(reponse);
-            good = listJSON.getBoolean("succes");
+            good = listJSON.getBoolean("success");
             if(good){
                 jsonProject = reponse;
             }
@@ -177,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements TaskDelegate {
 
 
                 signout = new JSONObject(reponse);
-                good = signout.getBoolean("succes");
+                good = signout.getBoolean("success");
                 message = signout.getString("error");
 
             } catch (ClientProtocolException e) {
@@ -246,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements TaskDelegate {
 
 
                 listJSON = new JSONObject(reponse);
-                good = listJSON.getBoolean("succes");
+                good = listJSON.getBoolean("success");
                 if(good){
                     jsonProject = reponse;
                 }

@@ -8,7 +8,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
-    <string name="webservice">Localhost://</string>
+    <string name="webservice">http://192.168.10.10</string>
     <string name="PREFS_DATA">SP_Project</string>
     <string name="title_activity_sign_in">SignInActivity</string>
+
+    <color name="color_primary">#EEEEEE</color>
+    <color name="color_primaryDark">#AAAAAA</color>
+    <color name="color_accent">#777777</color>
+    <color name="color_white">#FFFFFF</color>
 </resources>
