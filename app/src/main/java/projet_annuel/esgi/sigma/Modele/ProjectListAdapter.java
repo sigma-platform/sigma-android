@@ -1,7 +1,6 @@
-package projet_annuel.esgi.sigma;
+package projet_annuel.esgi.sigma.Modele;
 
 import android.content.Context;
-import android.support.v7.internal.view.menu.MenuView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import projet_annuel.esgi.sigma.R;
 
 /**
  * Created by bastien on 03/05/2015.

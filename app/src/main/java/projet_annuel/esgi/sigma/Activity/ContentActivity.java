@@ -1,4 +1,4 @@
-package projet_annuel.esgi.sigma;
+package projet_annuel.esgi.sigma.Activity;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,59 +8,77 @@ import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
+
+import projet_annuel.esgi.sigma.Fragment.NavigationDrawerFragment;
+import projet_annuel.esgi.sigma.Fragment.TaskFragment;
+import projet_annuel.esgi.sigma.Fragment.TaskListFragment;
+import projet_annuel.esgi.sigma.Modele.SigmaApplication;
+import projet_annuel.esgi.sigma.R;
 
 
-public class SignInActivity extends AppCompatActivity {
+public class ContentActivity extends ActionBarActivity {
 
-    EditText editEmail = null;
-    EditText editPass =null;
+    public NavigationDrawerFragment dlDrawer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_in);
+        setContentView(R.layout.activity_content);
+
+        SigmaApplication app = (SigmaApplication) getApplication();
+        String tab = app.getJsonProjects();
+        JSONObject update = null;
+        try {
+            update = new JSONObject(tab);
+            JSONObject jsonObj = update.getJSONObject("Data");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 
-        editPass = (EditText) findViewById(R.id.edit_Password);
-        editEmail = (EditText) findViewById(R.id.edit_Email);
-        Button SignIn = (Button) findViewById(R.id.BTN_SignIn);
-        SignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new IsConnected().execute();
-            }
-        });
+        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+        toolbar.getBackground().setAlpha(240);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+
+
+
+        dlDrawer = (NavigationDrawerFragment) findViewById(R.id.drawer_layout);
+
+        dlDrawer.setupDrawerConfiguration((ListView) findViewById(R.id.lvDrawer), toolbar,
+                R.layout.item_layout, R.id.flContent);
+
+        dlDrawer.addNavItem("Tache", "Tache", TaskFragment.class);
+        dlDrawer.addNavItem("Projet", "Projet", TaskListFragment.class);
+        dlDrawer.addNavItem("Deconnexion","Deconnexion",null);
+
+        if (savedInstanceState == null) {
+            dlDrawer.selectDrawerItem(0);
+        }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_sign_in, menu);
+        getMenuInflater().inflate(R.menu.menu_content, menu);
         return true;
     }
 
@@ -79,49 +97,39 @@ public class SignInActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class IsConnected extends AsyncTask<Void, Void, Void> {
+    public void deconnexion(){
+        new SignOut().execute();
+    }
+
+    private class SignOut extends AsyncTask<Void, Void, Void> {
 
 
         String message = "";
-        String session = "";
-        int idclient = 0;
         boolean good;
 
         @Override
         protected Void doInBackground(Void... arg0) {
 
-            String api_URL = getString(R.string.webservice).concat("/api/auth/login");
+
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(api_URL);
+
+            SharedPreferences setting = getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
+            String api_URL = getString(R.string.webservice).concat("/api/auth/logout?token=" +setting.getString("Token","") );
+            HttpGet httpGet = new HttpGet(api_URL);
 
             String reponse = null;
             HttpEntity httpEntity = null;
-            JSONObject inscription = null;
+            JSONObject signout = null;
 
             try {
-                List<NameValuePair> infoUser = new ArrayList<NameValuePair>(2);
-                infoUser.add(new BasicNameValuePair("email",((EditText) findViewById(R.id.edit_Email)).getText().toString() ));
-                infoUser.add(new BasicNameValuePair("password", ((EditText) findViewById(R.id.edit_Password)).getText().toString() ));
-
-                httppost.setEntity(new UrlEncodedFormEntity(infoUser));
-                HttpResponse response = httpclient.execute(httppost);
+                HttpResponse response = httpclient.execute(httpGet);
                 httpEntity  = response.getEntity();
                 reponse = EntityUtils.toString(httpEntity);
 
 
-                inscription = new JSONObject(reponse);
-                boolean error = inscription.getBoolean("success");
-                if(error){
-                    JSONObject jsonObj = inscription.getJSONObject("payload");
-                    good = true;
-                    session = jsonObj.getString("token");
-                    idclient = jsonObj.getInt("user_id");
-
-                }
-                else {
-                    message = inscription.getString("error");
-                    good = false;
-                }
+                signout = new JSONObject(reponse);
+                good = signout.getBoolean("success");
+                message = signout.getString("error");
 
             } catch (ClientProtocolException e) {
                 e.printStackTrace();
@@ -140,13 +148,14 @@ public class SignInActivity extends AppCompatActivity {
             if(good) {
                 SharedPreferences setting = getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = setting.edit();
-                editor.putInt("IdClient", idclient);
-                editor.putString("Token", session);
+                editor.putInt("IdClient", 0);
+                editor.putString("Token", "");
                 editor.commit();
-                SignInActivity.this.finish();
+                Intent intent = new Intent(ContentActivity.this,SignInActivity.class);
+                startActivity(intent);
             }
             else{
-                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(SignInActivity.this);
+                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ContentActivity.this);
                 alertDialogBuilder.setMessage(message);
 
                 alertDialogBuilder.setPositiveButton("ok",
@@ -161,4 +170,7 @@ public class SignInActivity extends AppCompatActivity {
         }
 
     }
+
+
+
 }

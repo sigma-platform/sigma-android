@@ -1,4 +1,4 @@
-package projet_annuel.esgi.sigma;
+package projet_annuel.esgi.sigma.Modele;
 
 
 /**

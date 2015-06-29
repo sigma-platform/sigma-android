@@ -1,4 +1,4 @@
-package projet_annuel.esgi.sigma;
+package projet_annuel.esgi.sigma.Modele;
 
 /**
  * Created by bastien on 03/05/2015.

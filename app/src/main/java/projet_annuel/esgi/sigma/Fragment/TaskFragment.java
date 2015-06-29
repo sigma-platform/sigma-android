@@ -1,11 +1,13 @@
-package projet_annuel.esgi.sigma;
+package projet_annuel.esgi.sigma.Fragment;
 
 
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import projet_annuel.esgi.sigma.R;
 
 
 /**

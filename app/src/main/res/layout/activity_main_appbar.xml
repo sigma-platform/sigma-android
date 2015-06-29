@@ -25,7 +25,7 @@
             android:layout_gravity="start"
             android:id="@+id/fragment_navigation_drawer"
             app:layout="@layout/fragment_navigation_drawer"
-            android:name="projet_annuel.esgi.sigma.NavigationDrawerFragment"
+            android:name="projet_annuel.esgi.sigma.Fragment.NavigationDrawerFragment"
             tools:layout="@layout/fragment_navigation_drawer" />
 
     </android.support.v4.widget.DrawerLayout>

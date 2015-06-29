@@ -1,9 +1,9 @@
-package projet_annuel.esgi.sigma;
+package projet_annuel.esgi.sigma.Fragment;
 
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.ListFragment;
+import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -11,7 +11,6 @@ import android.widget.ListView;
 
 import java.lang.ref.WeakReference;
 
-import projet_annuel.esgi.sigma.dummy.DummyContent;
 
 /**
  * A fragment representing a list of Items.
@@ -43,11 +42,6 @@ public class TaskListFragment extends ListFragment {
 
         setRetainInstance(true);
 
-
-
-        // TODO: Change Adapter to display your content
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS));
     }
 
 
@@ -73,11 +67,6 @@ public class TaskListFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
-        if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-        }
     }
 
     /**

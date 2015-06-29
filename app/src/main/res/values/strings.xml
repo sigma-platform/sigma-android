@@ -16,4 +16,5 @@
     <color name="color_primaryDark">#AAAAAA</color>
     <color name="color_accent">#777777</color>
     <color name="color_white">#FFFFFF</color>
+    <string name="title_activity_content">ContentActiv</string>
 </resources>

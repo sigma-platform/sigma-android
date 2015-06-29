@@ -1,21 +1,17 @@
-package projet_annuel.esgi.sigma;
+package projet_annuel.esgi.sigma.Activity;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -30,7 +26,11 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+
+import projet_annuel.esgi.sigma.Fragment.NavigationDrawerFragment;
+import projet_annuel.esgi.sigma.R;
+import projet_annuel.esgi.sigma.Modele.SigmaApplication;
+import projet_annuel.esgi.sigma.Modele.TaskDelegate;
 
 
 public class MainActivity extends AppCompatActivity implements TaskDelegate {
@@ -50,8 +50,6 @@ public class MainActivity extends AppCompatActivity implements TaskDelegate {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         new LoadProjectsData(this).execute();
-
-
     }
 
 
@@ -70,14 +68,8 @@ public class MainActivity extends AppCompatActivity implements TaskDelegate {
         } else {
             SigmaApplication app = (SigmaApplication) getApplication();
             app.setJsonProjects(jsonProject);
-            NavigationDrawerFragment drawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
-            drawerFragment.setUp(R.id.fragment_navigation_drawer,(DrawerLayout)findViewById(R.id.drawer_layout),toolbar);
-
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeButtonEnabled(true);
-
-            //ListTasks fragment = (ListTasks) getFragmentManager().findFragmentById(R.layout.fragment_list_task);
-
+            Intent intent = new Intent(MainActivity.this,ContentActivity.class);
+            startActivity(intent);
         }
     }
     @Override
@@ -94,54 +86,55 @@ public class MainActivity extends AppCompatActivity implements TaskDelegate {
 
         return super.onOptionsItemSelected(item);
     }
+
     private class LoadProjectsData extends AsyncTask<Void, Void, Void> {
 
-        boolean good;
-        String message="";
-        JSONArray listData = null;
+            boolean good;
+            String message="";
+            JSONArray listData = null;
 
-    private TaskDelegate delegate;
-        public LoadProjectsData(TaskDelegate delegate) {
-        this.delegate = delegate;
-    }
-
-    @Override
-    protected Void doInBackground(Void... params) {
-        SharedPreferences setting = getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
-        String api_URL = getString(R.string.webservice).concat("/api/project/user/?token=" +setting.getString("Token","") );
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpGet httpGet = new HttpGet(api_URL);
-
-        String reponse = null;
-        HttpEntity httpEntity = null;
-        JSONObject listJSON = null;
-
-        try {
-            HttpResponse response = httpclient.execute(httpGet);
-            httpEntity  = response.getEntity();
-            reponse = EntityUtils.toString(httpEntity);
-
-
-            listJSON = new JSONObject(reponse);
-            good = listJSON.getBoolean("success");
-            if(good){
-                jsonProject = reponse;
-            }
-            else {
-                message = listJSON.getString("error");
+            private TaskDelegate delegate;
+            public LoadProjectsData(TaskDelegate delegate) {
+                this.delegate = delegate;
             }
 
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+            @Override
+            protected Void doInBackground(Void... params) {
+                SharedPreferences setting = getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
+                String api_URL = getString(R.string.webservice).concat("/api/project/user/?token=" +setting.getString("Token","") );
+                HttpClient httpclient = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet(api_URL);
+
+                String reponse = null;
+                HttpEntity httpEntity = null;
+                JSONObject listJSON = null;
+
+                try {
+                    HttpResponse response = httpclient.execute(httpGet);
+                    httpEntity  = response.getEntity();
+                    reponse = EntityUtils.toString(httpEntity);
+
+
+                    listJSON = new JSONObject(reponse);
+                    good = listJSON.getBoolean("success");
+                    if(good){
+                        jsonProject = reponse;
+                    }
+                    else {
+                        message = listJSON.getString("error");
+                    }
+
+                } catch (ClientProtocolException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
 
     @Override
     protected void onPostExecute(Void aVoid) {
