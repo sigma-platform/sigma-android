@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -26,8 +25,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-
-import projet_annuel.esgi.sigma.Fragment.NavigationDrawerFragment;
 import projet_annuel.esgi.sigma.R;
 import projet_annuel.esgi.sigma.Modele.SigmaApplication;
 import projet_annuel.esgi.sigma.Modele.TaskDelegate;
@@ -37,7 +34,6 @@ public class MainActivity extends AppCompatActivity implements TaskDelegate {
 
     Toolbar toolbar;
     private String jsonProject;
-    private int[] projectId;
 
 
     @Override
