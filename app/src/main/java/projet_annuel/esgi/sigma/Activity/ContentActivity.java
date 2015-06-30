@@ -61,6 +61,8 @@ public class ContentActivity extends ActionBarActivity  implements TaskListFragm
         try {
             update = new JSONObject(tab);
             JSONArray jsonArray = update.getJSONArray("payload");
+            listId = new Integer[jsonArray.length()];
+            listLBL = new String[jsonArray.length()];
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject objectInArray = jsonArray.getJSONObject(i);
