@@ -45,9 +45,13 @@ public class MainActivity extends AppCompatActivity implements TaskDelegate {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        new LoadProjectsData(this).execute();
+
     }
 
+    @Override
+    protected void onStart() {
+        new LoadProjectsData(this).execute();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
