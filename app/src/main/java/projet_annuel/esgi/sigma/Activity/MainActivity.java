@@ -40,6 +40,8 @@ public class MainActivity extends Activity implements TaskDelegate {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_appbar);
+        if(!connected)
+            new LoadProjectsData(this).execute();
     }
 
     @Override
