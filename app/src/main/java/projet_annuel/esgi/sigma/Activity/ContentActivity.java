@@ -49,7 +49,7 @@ public class ContentActivity extends ActionBarActivity  implements TaskListFragm
         SigmaApplication app = (SigmaApplication) getApplication();
         String tab = app.getJsonProjects();
         JSONObject update = null;
-        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.mp_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);

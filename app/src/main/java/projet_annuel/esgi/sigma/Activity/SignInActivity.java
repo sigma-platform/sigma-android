@@ -1,12 +1,12 @@
 package projet_annuel.esgi.sigma.Activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +34,7 @@ import java.util.List;
 import projet_annuel.esgi.sigma.R;
 
 
-public class SignInActivity extends AppCompatActivity {
+public class SignInActivity extends Activity {
 
     EditText editEmail = null;
     EditText editPass =null;

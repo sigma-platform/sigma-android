@@ -1,5 +1,6 @@
 package projet_annuel.esgi.sigma.Activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,9 +30,8 @@ import projet_annuel.esgi.sigma.Modele.SigmaApplication;
 import projet_annuel.esgi.sigma.Modele.TaskDelegate;
 
 
-public class MainActivity extends AppCompatActivity implements TaskDelegate {
+public class MainActivity extends Activity implements TaskDelegate {
 
-    Toolbar toolbar;
     private String jsonProject;
 
 
@@ -40,12 +39,6 @@ public class MainActivity extends AppCompatActivity implements TaskDelegate {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_appbar);
-
-        toolbar = (Toolbar) findViewById(R.id.app_bar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
     }
 
     @Override
