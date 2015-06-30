@@ -246,6 +246,7 @@ public class MainActivity extends AppCompatActivity implements TaskDelegate {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             } catch (IOException e) {
+
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
