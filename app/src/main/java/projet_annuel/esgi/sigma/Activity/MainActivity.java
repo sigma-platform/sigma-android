@@ -33,6 +33,7 @@ import projet_annuel.esgi.sigma.Modele.TaskDelegate;
 public class MainActivity extends Activity implements TaskDelegate {
 
     private String jsonProject;
+    private boolean connected = false;
 
 
     @Override
@@ -43,7 +44,9 @@ public class MainActivity extends Activity implements TaskDelegate {
 
     @Override
     protected void onStart() {
-        new LoadProjectsData(this).execute();
+        super.onStart();
+        if(connected)
+            new LoadProjectsData(this).execute();
     }
 
     @Override
@@ -56,11 +59,13 @@ public class MainActivity extends Activity implements TaskDelegate {
 
     public void taskCompletionResult(Boolean result) {
         if (!result) {
+            connected =true;
             Intent intent = new Intent(MainActivity.this, SignInActivity.class);
             startActivity(intent);
         } else {
             SigmaApplication app = (SigmaApplication) getApplication();
             app.setJsonProjects(jsonProject);
+            connected = true;
             Intent intent = new Intent(MainActivity.this,ContentActivity.class);
             startActivity(intent);
         }
