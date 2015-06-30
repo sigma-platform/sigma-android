@@ -78,7 +78,7 @@ public class NavigationDrawerFragment extends DrawerLayout {
             try {
                 fragment = navItem.getFragmentClass().newInstance();
                 Bundle args = new Bundle();
-                args.putInt("Id",act.getIdFromPosition(position));
+                args.putInt("Id",act.getIdFromPosition(position - 1));
                 fragment.setArguments(args);
             } catch (Exception e) {
                 e.printStackTrace();

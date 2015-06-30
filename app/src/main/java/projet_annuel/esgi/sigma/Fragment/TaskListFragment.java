@@ -114,24 +114,22 @@ public class TaskListFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
             SharedPreferences setting = getActivity().getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
-            String api_URL = getString(R.string.webservice).concat("/api/project/user/" + projectId + "?token=" + setting.getString("Token", ""));
+            String api_URL = getString(R.string.webservice).concat("/api/project/" + projectId + "/task?token=" + setting.getString("Token", ""));
             HttpClient httpclient = new DefaultHttpClient();
             HttpGet httpGet = new HttpGet(api_URL);
 
             String reponse = null;
             HttpEntity httpEntity = null;
-            JSONObject listJSON = null;
 
             try {
                 HttpResponse response = httpclient.execute(httpGet);
                 httpEntity  = response.getEntity();
                 reponse = EntityUtils.toString(httpEntity);
                 JSONObject update = new JSONObject(reponse);
-                listJSON = update.getJSONObject("payload");
 
-                good = listJSON.getBoolean("success");
+                good = update.getBoolean("success");
                 if(good){
-                    JSONArray list = listJSON.getJSONArray("Mouvement");
+                    JSONArray list = update.getJSONArray("payload");
 
                         TabLib = new String[list.length()];
                         TabDateD = new String[list.length()];
@@ -147,7 +145,7 @@ public class TaskListFragment extends Fragment {
                         }
                 }
                 else {
-                    message = listJSON.getString("error");
+                    message = update.getString("error");
                 }
 
             } catch (ClientProtocolException e) {
