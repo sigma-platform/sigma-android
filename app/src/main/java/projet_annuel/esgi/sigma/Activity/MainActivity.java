@@ -87,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements TaskDelegate {
 
             boolean good;
             String message="";
-            JSONArray listData = null;
 
             private TaskDelegate delegate;
             public LoadProjectsData(TaskDelegate delegate) {

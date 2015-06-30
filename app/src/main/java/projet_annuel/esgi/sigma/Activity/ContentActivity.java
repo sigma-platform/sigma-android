@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,9 +35,12 @@ import projet_annuel.esgi.sigma.Modele.SigmaApplication;
 import projet_annuel.esgi.sigma.R;
 
 
-public class ContentActivity extends ActionBarActivity {
+public class ContentActivity extends ActionBarActivity  implements TaskListFragment.OnFragmentInteractionListener,TaskFragment.OnFragmentInteractionListener {
 
     public NavigationDrawerFragment dlDrawer;
+    private String[] listLBL = null;
+    private Integer[] listId = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,36 +49,41 @@ public class ContentActivity extends ActionBarActivity {
         SigmaApplication app = (SigmaApplication) getApplication();
         String tab = app.getJsonProjects();
         JSONObject update = null;
+        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        dlDrawer = (NavigationDrawerFragment) findViewById(R.id.drawer_layout);
+
+        dlDrawer.setupDrawerConfiguration((ListView) findViewById(R.id.lvDrawer), toolbar,
+                R.layout.item_layout, R.id.flContent);
+        dlDrawer.addNavItem("Deconnexion","Deconnexion",null);
         try {
             update = new JSONObject(tab);
-            JSONObject jsonObj = update.getJSONObject("Data");
+            JSONArray jsonArray = update.getJSONArray("payload");
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject objectInArray = jsonArray.getJSONObject(i);
+                listLBL[i] = objectInArray.getString("name");
+                listId[i] =  objectInArray.getInt("id");
+                dlDrawer.addNavItem(listLBL[i],listLBL[i], TaskListFragment.class);
+            }
+
+
+            if (savedInstanceState == null) {
+                dlDrawer.selectDrawerItem(1);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
-        toolbar.getBackground().setAlpha(240);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
 
-
-
-        dlDrawer = (NavigationDrawerFragment) findViewById(R.id.drawer_layout);
-
-        dlDrawer.setupDrawerConfiguration((ListView) findViewById(R.id.lvDrawer), toolbar,
-                R.layout.item_layout, R.id.flContent);
-
-        dlDrawer.addNavItem("Tache", "Tache", TaskFragment.class);
-        dlDrawer.addNavItem("Projet", "Projet", TaskListFragment.class);
-        dlDrawer.addNavItem("Deconnexion","Deconnexion",null);
-
-        if (savedInstanceState == null) {
-            dlDrawer.selectDrawerItem(0);
-        }
     }
 
+    public int getIdFromPosition(int position){
+        return listId[position];
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -99,6 +109,16 @@ public class ContentActivity extends ActionBarActivity {
 
     public void deconnexion(){
         new SignOut().execute();
+    }
+
+    @Override
+    public void onFragmentInteraction(String id) {
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 
     private class SignOut extends AsyncTask<Void, Void, Void> {

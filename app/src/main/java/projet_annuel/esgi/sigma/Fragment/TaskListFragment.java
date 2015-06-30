@@ -1,49 +1,82 @@
 package projet_annuel.esgi.sigma.Fragment;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
 import android.widget.ListView;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.lang.ref.WeakReference;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+
+import projet_annuel.esgi.sigma.Modele.ListTaskAdapter;
+import projet_annuel.esgi.sigma.Modele.Task;
+import projet_annuel.esgi.sigma.Modele.TaskDelegate;
+import projet_annuel.esgi.sigma.R;
 
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
- * interface.
- */
-public class TaskListFragment extends ListFragment {
+public class TaskListFragment extends Fragment {
 
-    String jsonTasks;
+    private String TabDateF[];
+    private String TabDateD[];
+    private String TabLib[];
+    private Float TabTmp[];
+
     private OnFragmentInteractionListener mListener;
-    private WeakReference<LoadTaskData> asyncTaskWeakRef;
+    private int projectId;
 
-
-    public TaskListFragment() {
+    // TODO: Rename and change types and number of parameters
+    public static TaskListFragment newInstance(String param1, String param2) {
+        TaskListFragment fragment = new TaskListFragment();
+        return fragment;
     }
 
-    private void startNewAsyncTask() {
-        LoadTaskData asyncTask = new LoadTaskData(this);
-        this.asyncTaskWeakRef = new WeakReference<LoadTaskData>(asyncTask );
-        asyncTask.execute();
+    public TaskListFragment() {
+        // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        jsonTasks = getArguments().getString("Tasks");
-
-        setRetainInstance(true);
-
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        if (getArguments() != null) {
+            projectId = getArguments().getInt("Id");
+        }
+        new LoadTaskList().execute();
+        View v = inflater.inflate(R.layout.fragment_task_list, container, false);
+        return v;
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -63,47 +96,98 @@ public class TaskListFragment extends ListFragment {
     }
 
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+        public void onFragmentInteraction(Uri uri);
     }
 
-    private static class LoadTaskData extends AsyncTask<Void, Void, Void> {
 
-        private WeakReference<TaskListFragment> fragmentWeakRef;
+    private class LoadTaskList extends AsyncTask<Void,Void,Void>{
 
-        private LoadTaskData (TaskListFragment fragment) {
-            this.fragmentWeakRef = new WeakReference<TaskListFragment>(fragment);
+        boolean good;
+        String message="";
+
+        private TaskDelegate delegate;
+        public LoadTaskList() {
         }
 
         @Override
         protected Void doInBackground(Void... params) {
+            SharedPreferences setting = getActivity().getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
+            String api_URL = getString(R.string.webservice).concat("/api/project/user/" + projectId + "?token=" + setting.getString("Token", ""));
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet httpGet = new HttpGet(api_URL);
 
-            //TODO: your background code
+            String reponse = null;
+            HttpEntity httpEntity = null;
+            JSONObject listJSON = null;
+
+            try {
+                HttpResponse response = httpclient.execute(httpGet);
+                httpEntity  = response.getEntity();
+                reponse = EntityUtils.toString(httpEntity);
+                JSONObject update = new JSONObject(reponse);
+                listJSON = update.getJSONObject("payload");
+
+                good = listJSON.getBoolean("success");
+                if(good){
+                    JSONArray list = listJSON.getJSONArray("Mouvement");
+
+                        TabLib = new String[list.length()];
+                        TabDateD = new String[list.length()];
+                        TabDateF = new String[list.length()];
+                        TabTmp = new Float[list.length()];
+
+                        for (int i = 0; i < list.length(); i++) {
+                            JSONObject objectInArray = list.getJSONObject(i);
+                            TabLib[i] = objectInArray.getString("label");
+                            TabTmp[i] = (float) objectInArray.getInt("estimated_time");
+                            TabDateD[i] = objectInArray.getString("date_start");
+                            TabDateF[i] = objectInArray.getString("date_end");
+                        }
+                }
+                else {
+                    message = listJSON.getString("error");
+                }
+
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void response) {
-            super.onPostExecute(response);
-            if (this.fragmentWeakRef.get() != null) {
-                //TODO: treat the result
+        protected void onPostExecute(Void aVoid) {
+            if(good) {
+                if (TabTmp != null && TabLib != null && TabDateD !=null && TabDateF !=null) {
+                    ListView lv = (ListView) getView().findViewById(R.id.listTask);
+                    ArrayList listTask = new ArrayList();
+                    for (int i = 0; i < TabDateD.length; i++) {
+                        listTask.add(new Task(TabLib[i],TabDateD[i],TabDateF[i],TabTmp[i]));
+                    }
+
+                    lv.setAdapter(new ListTaskAdapter(getActivity().getApplicationContext(), listTask));
+                }
+            }
+            else
+            {
+                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                alertDialogBuilder.setMessage(message);
+
+                alertDialogBuilder.setPositiveButton("ok",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                            }
+                        });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
             }
         }
     }

@@ -69,19 +69,17 @@ public class NavigationDrawerFragment extends DrawerLayout {
 
 
     public void selectDrawerItem(int position) {
-
-        if(position == 1){
-            ContentActivity act = (ContentActivity) getActivity();
+        ContentActivity act = (ContentActivity) getActivity();
+        if(position == 0){
             act.deconnexion();
         }else {
             FragmentNavItem navItem = drawerNavItems.get(position);
             Fragment fragment = null;
             try {
                 fragment = navItem.getFragmentClass().newInstance();
-                Bundle args = navItem.getFragmentArgs();
-                if (args != null) {
-                    fragment.setArguments(args);
-                }
+                Bundle args = new Bundle();
+                args.putInt("Id",act.getIdFromPosition(position));
+                fragment.setArguments(args);
             } catch (Exception e) {
                 e.printStackTrace();
             }

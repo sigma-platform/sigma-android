@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="7dip" >
+
+
+    <TextView
+        android:id="@+id/txt_libelle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="libelle"
+        android:textColor="#040404"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:typeface="sans"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="13dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:id="@+id/txt_tmp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_alignBottom="@+id/txt_libelle"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DateD"
+        android:textColor="#000000"
+        android:id="@+id/dateD"
+        android:layout_below="@+id/txt_libelle"
+        android:layout_alignLeft="@+id/txt_libelle"
+        android:layout_alignStart="@+id/txt_libelle" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DateF"
+        android:textColor="#000000"
+        android:id="@+id/dateF"
+        android:layout_below="@+id/txt_libelle"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
