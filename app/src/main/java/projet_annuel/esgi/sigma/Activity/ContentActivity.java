@@ -34,6 +34,7 @@ import java.io.UnsupportedEncodingException;
 import projet_annuel.esgi.sigma.Fragment.NavigationDrawerFragment;
 import projet_annuel.esgi.sigma.Fragment.TaskFragment;
 import projet_annuel.esgi.sigma.Fragment.TaskListFragment;
+import projet_annuel.esgi.sigma.Fragment.TimeListFragment;
 import projet_annuel.esgi.sigma.Modele.SigmaApplication;
 import projet_annuel.esgi.sigma.R;
 
@@ -63,6 +64,7 @@ public class ContentActivity extends ActionBarActivity  implements TaskListFragm
         dlDrawer.setupDrawerConfiguration((ListView) findViewById(R.id.lvDrawer), toolbar,
                 R.layout.item_layout, R.id.flContent);
         dlDrawer.addNavItem("Deconnexion","Deconnexion",null);
+        dlDrawer.addNavItem("Historique Travail","Historique", TimeListFragment.class);
         try {
             update = new JSONObject(tab);
             JSONArray jsonArray = update.getJSONArray("payload");

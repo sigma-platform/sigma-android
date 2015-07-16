@@ -1,9 +1,6 @@
 package projet_annuel.esgi.sigma.Modele;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import projet_annuel.esgi.sigma.Activity.ContentActivity;
+
 import projet_annuel.esgi.sigma.R;
 
 /**
