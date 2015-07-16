@@ -72,6 +72,14 @@ public class NavigationDrawerFragment extends DrawerLayout {
         ContentActivity act = (ContentActivity) getActivity();
         if(position == 0){
             act.deconnexion();
+        }else if(position == 1) {
+            FragmentNavItem navItem = drawerNavItems.get(position);
+            TimeListFragment fragment = new TimeListFragment();
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(drawerContainerRes, fragment).commit();
+            lvDrawer.setItemChecked(position, true);
+            setTitle(navItem.getTitle());
+            closeDrawer(lvDrawer);
         }else {
             FragmentNavItem navItem = drawerNavItems.get(position);
             Fragment fragment = null;

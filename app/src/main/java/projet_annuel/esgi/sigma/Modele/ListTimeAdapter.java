@@ -55,6 +55,7 @@ public class ListTimeAdapter  extends BaseAdapter {
                     .findViewById(R.id.txt_Passer);
             holder.dateView = (TextView) convertView
                     .findViewById(R.id.txt_Date);
+            convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }

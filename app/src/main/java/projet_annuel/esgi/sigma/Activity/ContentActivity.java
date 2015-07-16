@@ -39,7 +39,7 @@ import projet_annuel.esgi.sigma.Modele.SigmaApplication;
 import projet_annuel.esgi.sigma.R;
 
 
-public class ContentActivity extends ActionBarActivity  implements TaskListFragment.OnFragmentInteractionListener,TaskFragment.OnFragmentInteractionListener {
+public class ContentActivity extends ActionBarActivity  implements TaskListFragment.OnFragmentInteractionListener,TaskFragment.OnFragmentInteractionListener,TimeListFragment.OnFragmentInteractionListener {
 
     public NavigationDrawerFragment dlDrawer;
     private String[] listLBL = null;

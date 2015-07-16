@@ -60,6 +60,7 @@ public class TimeListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        new LoadTime().execute();
         return inflater.inflate(R.layout.fragment_time_list, container, false);
     }
 
@@ -79,6 +80,7 @@ public class TimeListFragment extends Fragment {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+
     }
 
     @Override
@@ -110,7 +112,7 @@ public class TimeListFragment extends Fragment {
         protected Void doInBackground(Void... params) {
 
             SharedPreferences setting = getActivity().getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
-            String api_URL = getString(R.string.webservice).concat("api/time?token=" + setting.getString("Token", ""));
+            String api_URL = getString(R.string.webservice).concat("/api/time?token=" + setting.getString("Token", ""));
             HttpClient httpclient = new DefaultHttpClient();
             HttpGet httpGet = new HttpGet(api_URL);
 
@@ -132,7 +134,7 @@ public class TimeListFragment extends Fragment {
 
                     for (int i = 0; i < js.length(); i++) {
                         JSONObject objectInArray = js.getJSONObject(i);
-                        lstDate[i] = objectInArray.getString("updated_at");
+                        lstDate[i] = objectInArray.getString("date");
                         lstLbl[i] = objectInArray.getJSONObject("task").getString("label");
                         lstDateP[i] = objectInArray.getString("time");
                         lstDateE[i] = objectInArray.getJSONObject("task").getString("estimated_time");
@@ -154,7 +156,7 @@ public class TimeListFragment extends Fragment {
 
                 if (lstDateE != null) {
                     lstTime = (ListView) getView().findViewById(R.id.listView);
-                    ArrayList list = new ArrayList();
+                    ArrayList<Time> list = new ArrayList<>();
                     for (int i = 0; i < lstDateE.length; i++) {
                         list.add(new Time(lstLbl[i],lstDate[i],lstDateE[i],lstDateP[i]));
                     }
