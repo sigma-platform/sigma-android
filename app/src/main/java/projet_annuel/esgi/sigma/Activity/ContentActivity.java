@@ -10,8 +10,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ListView;
 
 import org.apache.http.HttpEntity;
@@ -40,6 +43,8 @@ public class ContentActivity extends ActionBarActivity  implements TaskListFragm
     public NavigationDrawerFragment dlDrawer;
     private String[] listLBL = null;
     private Integer[] listId = null;
+    private int idTask;
+    private int idTodo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +122,7 @@ public class ContentActivity extends ActionBarActivity  implements TaskListFragm
     public void onFragmentInteraction(String id) {
 
     }
+
 
     @Override
     public void onFragmentInteraction(Uri uri) {

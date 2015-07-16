@@ -8,10 +8,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.apache.http.HttpEntity;
@@ -41,6 +43,8 @@ public class TaskListFragment extends Fragment {
     private String TabDateD[];
     private String TabLib[];
     private Float TabTmp[];
+    private Integer TabId[];
+    private int positionT;
 
     private OnFragmentInteractionListener mListener;
     private int projectId;
@@ -131,18 +135,20 @@ public class TaskListFragment extends Fragment {
                 if(good){
                     JSONArray list = update.getJSONArray("payload");
 
-                        TabLib = new String[list.length()];
-                        TabDateD = new String[list.length()];
-                        TabDateF = new String[list.length()];
-                        TabTmp = new Float[list.length()];
+                    TabLib = new String[list.length()];
+                    TabDateD = new String[list.length()];
+                    TabDateF = new String[list.length()];
+                    TabTmp = new Float[list.length()];
+                    TabId = new Integer[list.length()];
 
-                        for (int i = 0; i < list.length(); i++) {
-                            JSONObject objectInArray = list.getJSONObject(i);
-                            TabLib[i] = objectInArray.getString("label");
-                            TabTmp[i] = (float) objectInArray.getInt("estimated_time");
-                            TabDateD[i] = objectInArray.getString("date_start");
-                            TabDateF[i] = objectInArray.getString("date_end");
-                        }
+                    for (int i = 0; i < list.length(); i++) {
+                        JSONObject objectInArray = list.getJSONObject(i);
+                        TabId[i] = objectInArray.getInt("id");
+                        TabLib[i] = objectInArray.getString("label");
+                        TabTmp[i] = (float) objectInArray.getInt("estimated_time");
+                        TabDateD[i] = objectInArray.getString("date_start");
+                        TabDateF[i] = objectInArray.getString("date_end");
+                    }
                 }
                 else {
                     message = update.getString("error");
@@ -171,6 +177,19 @@ public class TaskListFragment extends Fragment {
                     }
 
                     lv.setAdapter(new ListTaskAdapter(getActivity().getApplicationContext(), listTask));
+                    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Fragment newFragment = new TaskFragment();
+                            Bundle args = new Bundle();
+                            args.putInt("IdTask",TabId[position]);
+                            newFragment.setArguments(args);
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.flContent, newFragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+                        }
+                    });
                 }
             }
             else
@@ -189,4 +208,7 @@ public class TaskListFragment extends Fragment {
             }
         }
     }
+
+
+
 }

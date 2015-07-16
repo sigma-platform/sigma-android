@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -114,6 +115,7 @@ public class SignInActivity extends Activity {
                     good = true;
                     session = jsonObj.getString("token");
                     idclient = jsonObj.getInt("user_id");
+                    Log.v("test",api_URL);
 
                 }
                 else {

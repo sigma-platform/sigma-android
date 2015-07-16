@@ -1,6 +1,9 @@
 package projet_annuel.esgi.sigma.Modele;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,20 +13,26 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import projet_annuel.esgi.sigma.Activity.ContentActivity;
 import projet_annuel.esgi.sigma.R;
 
 /**
- * Created by bastien on 30/06/2015.
+ * Created by support on 16/07/2015.
  */
-public class ListTaskAdapter extends BaseAdapter {
+public class ListTodoAdapter extends BaseAdapter {
 
     private List<Task> listTask = null;
     LayoutInflater layoutInflater;
 
-    public ListTaskAdapter(Context context, List lstTask){
+    int position;
+    int id;
+
+
+    public ListTodoAdapter(Context context, List lstTask){
         layoutInflater = LayoutInflater.from(context);
         this.listTask = lstTask;
     }
+
     @Override
     public int getCount() {
         return listTask.size();
@@ -39,9 +48,8 @@ public class ListTaskAdapter extends BaseAdapter {
         return position;
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        final ViewHolder holder;
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.task_layout, null);
             holder = new ViewHolder();
@@ -55,15 +63,16 @@ public class ListTaskAdapter extends BaseAdapter {
                     .findViewById(R.id.dateF);
             holder.cbTodo = (CheckBox) convertView.findViewById(R.id.CB_Todo);
             convertView.setTag(holder);
-            holder.cbTodo.setVisibility(View.GONE);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
         holder.lblView.setText(listTask.get(position).getNom());
-        holder.tmpView.setText(String.valueOf(listTask.get(position).getTmp()) + "h");
-        holder.dateDView.setText(listTask.get(position).getDateD());
-        holder.dateFView.setText(listTask.get(position).getDateF());
+        holder.tmpView.setVisibility(View.GONE);
+        holder.dateDView.setVisibility(View.GONE);
+        holder.dateFView.setVisibility(View.GONE);
+        holder.cbTodo.setText("Done");
+        holder.cbTodo.setTag(position);
         return convertView;
 
     }
@@ -75,4 +84,6 @@ public class ListTaskAdapter extends BaseAdapter {
         TextView tmpView;
         CheckBox cbTodo;
     }
+
+
 }

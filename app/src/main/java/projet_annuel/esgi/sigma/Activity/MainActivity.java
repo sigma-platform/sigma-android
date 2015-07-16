@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -33,20 +34,30 @@ import projet_annuel.esgi.sigma.Modele.TaskDelegate;
 public class MainActivity extends Activity implements TaskDelegate {
 
     private String jsonProject;
-    private boolean connected = false;
+    boolean connected = false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_appbar);
-        if(!connected)
+
+        SharedPreferences setting = getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
+        if(setting.getString("Token","").equals("")) {
+            Log.v("Ontestsaomoin??",setting.getString("Token",""));
+            Intent intent = new Intent(MainActivity.this, SignInActivity.class);
+            startActivity(intent);
+            connected = true;
+        }
+        else{
+            Log.v("Ontestsaomoin??",setting.getString("Token",""));
             new LoadProjectsData(this).execute();
+        }
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         if(connected)
             new LoadProjectsData(this).execute();
     }
@@ -61,17 +72,19 @@ public class MainActivity extends Activity implements TaskDelegate {
 
     public void taskCompletionResult(Boolean result) {
         if (!result) {
-            connected =true;
             Intent intent = new Intent(MainActivity.this, SignInActivity.class);
             startActivity(intent);
+            connected = true;
         } else {
             SigmaApplication app = (SigmaApplication) getApplication();
             app.setJsonProjects(jsonProject);
-            connected = true;
             Intent intent = new Intent(MainActivity.this,ContentActivity.class);
             startActivity(intent);
         }
     }
+
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -89,57 +102,57 @@ public class MainActivity extends Activity implements TaskDelegate {
 
     private class LoadProjectsData extends AsyncTask<Void, Void, Void> {
 
-            boolean good;
-            String message="";
+        boolean good;
+        String message="";
 
-            private TaskDelegate delegate;
-            public LoadProjectsData(TaskDelegate delegate) {
-                this.delegate = delegate;
-            }
+        private TaskDelegate delegate;
+        public LoadProjectsData(TaskDelegate delegate) {
+            this.delegate = delegate;
+        }
 
-            @Override
-            protected Void doInBackground(Void... params) {
-                SharedPreferences setting = getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
-                String api_URL = getString(R.string.webservice).concat("/api/project/user/?token=" +setting.getString("Token","") );
-                HttpClient httpclient = new DefaultHttpClient();
-                HttpGet httpGet = new HttpGet(api_URL);
+        @Override
+        protected Void doInBackground(Void... params) {
+            SharedPreferences setting = getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
+            String api_URL = getString(R.string.webservice).concat("/api/project/user/?token=" +setting.getString("Token","") );
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet httpGet = new HttpGet(api_URL);
+            Log.v("test", api_URL);
+            String reponse = null;
+            HttpEntity httpEntity = null;
+            JSONObject listJSON = null;
 
-                String reponse = null;
-                HttpEntity httpEntity = null;
-                JSONObject listJSON = null;
-
-                try {
-                    HttpResponse response = httpclient.execute(httpGet);
-                    httpEntity  = response.getEntity();
-                    reponse = EntityUtils.toString(httpEntity);
+            try {
+                HttpResponse response = httpclient.execute(httpGet);
+                httpEntity  = response.getEntity();
+                reponse = EntityUtils.toString(httpEntity);
 
 
-                    listJSON = new JSONObject(reponse);
-                    good = listJSON.getBoolean("success");
-                    if(good){
-                        jsonProject = reponse;
-                    }
-                    else {
-                        message = listJSON.getString("error");
-                    }
-
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                listJSON = new JSONObject(reponse);
+                good = listJSON.getBoolean("success");
+                if(good){
+                    jsonProject = reponse;
                 }
-                return null;
-            }
+                else {
+                    message = listJSON.getString("error");
+                }
 
-    @Override
-    protected void onPostExecute(Void aVoid) {
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
             delegate.taskCompletionResult(good);
+        }
     }
-}
 
     private class SignOut extends AsyncTask<Void, Void, Void> {
 
@@ -260,7 +273,7 @@ public class MainActivity extends Activity implements TaskDelegate {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-        //lancer le fragment TaskList et mettre en parametre la string contenant tout le json
+            //lancer le fragment TaskList et mettre en parametre la string contenant tout le json
 
         }
     }
