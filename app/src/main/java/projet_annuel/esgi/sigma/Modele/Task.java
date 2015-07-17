@@ -26,11 +26,22 @@ public class Task {
     public String dateF;
     public float tmp;
 
-    public Task(String nom,String dateD, String dateF, float tmp){
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String version;
+
+    public Task(String nom,String dateD, String dateF, float tmp, String version){
         this.nom = nom;
         this.dateD = dateD;
         this.dateF = dateF;
         this.tmp=tmp;
+        this.version = version;
     }
 
     public Task(){

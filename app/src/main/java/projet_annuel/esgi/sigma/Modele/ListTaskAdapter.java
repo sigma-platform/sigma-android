@@ -56,6 +56,18 @@ public class ListTaskAdapter extends BaseAdapter {
             holder.cbTodo = (CheckBox) convertView.findViewById(R.id.CB_Todo);
             convertView.setTag(holder);
             holder.cbTodo.setVisibility(View.GONE);
+            holder.separator = (TextView) convertView.findViewById(R.id.separator);
+            holder.line = (View) convertView.findViewById(R.id.layout);
+
+            if(listTask.get(position).getVersion().equals("")) {
+                holder.separator.setVisibility(View.GONE);
+                holder.line.setVisibility(View.GONE);
+            }
+            else {
+                holder.separator.setText(listTask.get(position).getVersion());
+                holder.line.setVisibility(View.VISIBLE);
+            }
+
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
@@ -73,6 +85,8 @@ public class ListTaskAdapter extends BaseAdapter {
         TextView dateFView;
         TextView dateDView;
         TextView tmpView;
+        TextView separator;
         CheckBox cbTodo;
+        View line;
     }
 }

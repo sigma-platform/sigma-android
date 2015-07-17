@@ -11,7 +11,8 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/txt_Lbl"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textColor="#ff000000" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -19,7 +20,8 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/txt_Date"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:textColor="#ff000000" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,7 +29,8 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/txt_Estimer"
         android:layout_below="@+id/txt_Lbl"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:textColor="#ff000000" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -35,5 +38,6 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/txt_Passer"
         android:layout_below="@+id/txt_Lbl"
-        android:layout_alignEnd="@+id/txt_Date" />
+        android:layout_alignEnd="@+id/txt_Date"
+        android:textColor="#ff000000" />
 </RelativeLayout>

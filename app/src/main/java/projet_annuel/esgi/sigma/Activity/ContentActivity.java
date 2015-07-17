@@ -31,6 +31,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import projet_annuel.esgi.sigma.Fragment.CommentaireFragment;
 import projet_annuel.esgi.sigma.Fragment.NavigationDrawerFragment;
 import projet_annuel.esgi.sigma.Fragment.TaskFragment;
 import projet_annuel.esgi.sigma.Fragment.TaskListFragment;
@@ -39,7 +40,7 @@ import projet_annuel.esgi.sigma.Modele.SigmaApplication;
 import projet_annuel.esgi.sigma.R;
 
 
-public class ContentActivity extends ActionBarActivity  implements TaskListFragment.OnFragmentInteractionListener,TaskFragment.OnFragmentInteractionListener,TimeListFragment.OnFragmentInteractionListener {
+public class ContentActivity extends ActionBarActivity  implements CommentaireFragment.OnFragmentInteractionListener,TaskListFragment.OnFragmentInteractionListener,TaskFragment.OnFragmentInteractionListener,TimeListFragment.OnFragmentInteractionListener {
 
     public NavigationDrawerFragment dlDrawer;
     private String[] listLBL = null;
@@ -75,12 +76,13 @@ public class ContentActivity extends ActionBarActivity  implements TaskListFragm
                 JSONObject objectInArray = jsonArray.getJSONObject(i);
                 listLBL[i] = objectInArray.getString("name");
                 listId[i] =  objectInArray.getInt("id");
+                Log.v("EUH TT EST",listId[i]+"");
                 dlDrawer.addNavItem(listLBL[i],listLBL[i], TaskListFragment.class);
             }
 
 
             if (savedInstanceState == null) {
-                dlDrawer.selectDrawerItem(1);
+                dlDrawer.selectDrawerItem(2);
             }
         } catch (JSONException e) {
             e.printStackTrace();

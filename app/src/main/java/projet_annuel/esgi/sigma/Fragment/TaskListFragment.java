@@ -42,6 +42,7 @@ public class TaskListFragment extends Fragment {
     private String TabDateF[];
     private String TabDateD[];
     private String TabLib[];
+    private String TabVers[];
     private Float TabTmp[];
     private Integer TabId[];
     private int positionT;
@@ -140,6 +141,7 @@ public class TaskListFragment extends Fragment {
                     TabDateF = new String[list.length()];
                     TabTmp = new Float[list.length()];
                     TabId = new Integer[list.length()];
+                    TabVers = new String[list.length()];
 
                     for (int i = 0; i < list.length(); i++) {
                         JSONObject objectInArray = list.getJSONObject(i);
@@ -148,6 +150,7 @@ public class TaskListFragment extends Fragment {
                         TabTmp[i] = (float) objectInArray.getInt("estimated_time");
                         TabDateD[i] = objectInArray.getString("date_start");
                         TabDateF[i] = objectInArray.getString("date_end");
+                        TabVers[i] = objectInArray.getJSONObject("version").getString("description");
                     }
                 }
                 else {
@@ -171,9 +174,16 @@ public class TaskListFragment extends Fragment {
             if(good) {
                 if (TabTmp != null && TabLib != null && TabDateD !=null && TabDateF !=null) {
                     ListView lv = (ListView) getView().findViewById(R.id.listTask);
+                    String testeur ="";
                     ArrayList listTask = new ArrayList();
+                    if(TabVers.length!=0)
+                        testeur = TabVers[0];
                     for (int i = 0; i < TabDateD.length; i++) {
-                        listTask.add(new Task(TabLib[i],TabDateD[i],TabDateF[i],TabTmp[i]));
+                        if(testeur.equals(TabVers[i]) && i !=0)
+                            listTask.add(new Task(TabLib[i],TabDateD[i],TabDateF[i],TabTmp[i],""));
+                        else
+                           listTask.add(new Task(TabLib[i],TabDateD[i],TabDateF[i],TabTmp[i],TabVers[i]));
+                        testeur = TabVers[i];
                     }
 
                     lv.setAdapter(new ListTaskAdapter(getActivity().getApplicationContext(), listTask));

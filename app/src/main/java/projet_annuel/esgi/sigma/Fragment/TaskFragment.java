@@ -7,11 +7,14 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -46,6 +49,7 @@ public class TaskFragment extends Fragment {
     ListView lstTodo;
     TextView txtLBL;
     String label;
+    Button comment;
     int position;
 
     private OnFragmentInteractionListener mListener;
@@ -67,6 +71,20 @@ public class TaskFragment extends Fragment {
         SigmaApplication app = (SigmaApplication) getActivity().getApplication();
         app.setIdTask(idTask);
         new LoadTask().execute();
+        comment = (Button)v.findViewById(R.id.button);
+        comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = new CommentaireFragment();
+                Bundle args = new Bundle();
+                args.putInt("Id", idTask);
+                fragment.setArguments(args);
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.flContent,fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
         return v;
 
     }
@@ -143,6 +161,7 @@ public class TaskFragment extends Fragment {
     private class LoadTodo extends AsyncTask<Void, Void, Void> {
         private boolean good;
         private String[] lst;
+        private String[] lstDone;
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -164,9 +183,11 @@ public class TaskFragment extends Fragment {
                 if (good) {
                     JSONArray js = update.getJSONArray("payload");
                     lst = new String[js.length()];
+                    lstDone = new String[js.length()];
                     for (int i = 0; i < js.length(); i++) {
                         JSONObject objectInArray = js.getJSONObject(i);
                         lst[i] = objectInArray.getString("label");
+                        lstDone[i] = objectInArray.getString("done");
                     }
                 }
 
@@ -187,7 +208,8 @@ public class TaskFragment extends Fragment {
                     lstTodo = (ListView) getView().findViewById(R.id.lst_Todo);
                     ArrayList listTodo = new ArrayList();
                     for (int i = 0; i < lst.length; i++) {
-                        listTodo.add(new Task(lst[i], null, null,(idTask + ((i+1)/100) ) ) );
+
+                        listTodo.add(new Task(lst[i], lstDone[i], null,(idTask + ((i+1)/100) ),"" ) );
                     }
                     lstTodo.setAdapter(new ListTodoAdapter(getActivity().getApplicationContext(), listTodo));
                 }
@@ -196,21 +218,4 @@ public class TaskFragment extends Fragment {
 
     }
 
-    public void UpdateTodo(View v){
-        CheckBox cb = (CheckBox) v;
-        position = Integer.parseInt(cb.getTag().toString());
-        Log.v("TEST","JESPERE");
-    }
-
-    private class UpdateTodos extends AsyncTask<Void, Void, Void> {
-
-        private int idTask;
-        private int idTodo;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            Log.v("TEST","JESPERE");
-            return null;
-        }
-    }
 }

@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 
@@ -59,11 +61,21 @@ public class ListTodoAdapter extends BaseAdapter {
             holder.dateFView = (TextView) convertView
                     .findViewById(R.id.dateF);
             holder.cbTodo = (CheckBox) convertView.findViewById(R.id.CB_Todo);
+            holder.separator = (TextView) convertView.findViewById(R.id.separator);
+            holder.line = (View) convertView.findViewById(R.id.layout);
+
+            holder.line.setVisibility(View.GONE);
+
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+        if(listTask.get(position).getDateD().equals("1"))
+            holder.cbTodo.setChecked(true);
+        else
+            holder.cbTodo.setChecked(false);
 
+        holder.separator.setVisibility(View.GONE);
         holder.lblView.setText(listTask.get(position).getNom());
         holder.tmpView.setVisibility(View.GONE);
         holder.dateDView.setVisibility(View.GONE);
@@ -79,6 +91,8 @@ public class ListTodoAdapter extends BaseAdapter {
         TextView dateFView;
         TextView dateDView;
         TextView tmpView;
+        TextView separator;
+        View line;
         CheckBox cbTodo;
     }
 
