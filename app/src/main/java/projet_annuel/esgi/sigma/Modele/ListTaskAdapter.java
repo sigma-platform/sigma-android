@@ -47,12 +47,9 @@ public class ListTaskAdapter extends BaseAdapter {
             holder = new ViewHolder();
 
             holder.lblView = (TextView) convertView.findViewById(R.id.txt_libelle);
-            holder.tmpView = (TextView) convertView
-                    .findViewById(R.id.txt_tmp);
-            holder.dateDView = (TextView) convertView
-                    .findViewById(R.id.dateD);
-            holder.dateFView = (TextView) convertView
-                    .findViewById(R.id.dateF);
+            holder.tmpView = (TextView) convertView.findViewById(R.id.txt_tmp);
+            holder.dateDView = (TextView) convertView.findViewById(R.id.dateD);
+            holder.dateFView = (TextView) convertView.findViewById(R.id.dateF);
             holder.cbTodo = (CheckBox) convertView.findViewById(R.id.CB_Todo);
             convertView.setTag(holder);
             holder.cbTodo.setVisibility(View.GONE);
