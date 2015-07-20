@@ -74,6 +74,8 @@ public class TaskFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_task, container, false);
         idTask = getArguments().getInt("IdTask");
+        SharedPreferences setting = getActivity().getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
+
         SigmaApplication app = (SigmaApplication) getActivity().getApplication();
         app.setIdTask(idTask);
         new LoadTask().execute();
@@ -96,23 +98,43 @@ public class TaskFragment extends Fragment {
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences setting = getActivity().getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
                 if (start.getText().toString().equals("Start the Task")) {
                     Date d = new Date();
-                    dateD = (int) d.getTime();
-                    Log.v("Date de base",dateD +"");
+                    SharedPreferences.Editor editor = setting.edit();
+                    editor.putInt("dateD",(int)d.getTime());
+                    editor.putInt("IdTask", idTask);
+                    editor.commit();
+                    Log.v("EUH WHAT", setting.getInt("IdTask",0 )+ "");
                     start.setText("Stop the Task");
                 } else {
                     Date d = new Date();
                     dateF = (int) d.getTime();
-                    int result = dateF - dateD;
+                    int result = dateF - setting.getInt("dateD",0);
                     timingPast = (float) result / (3600 * 1000);
                     Log.v("Date de base",dateF +"");
                     start.setText("Start the Task");
+                    SharedPreferences.Editor editor = setting.edit();
+                    editor.putInt("dateD",0);
+                    editor.putInt("IdTask",0);
+                    editor.commit();
                     new AddTimeWorked().execute();
                 }
 
+
+
             }
         });
+
+        if(setting.getInt("IdTask",0) != idTask  && setting.getInt("IdTask",0) != 0) {
+            Log.v("Condtion",setting.getInt("IdTask",0 ) +"");
+            start.setVisibility(View.GONE);
+        }
+        else{
+            if(setting.getInt("IdTask",0) == idTask){
+                start.setText("Stop the Task");
+            }
+        }
         return v;
 
     }
@@ -252,6 +274,7 @@ public class TaskFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
             Log.v("ALORS SA TIME",timingPast +"");
+            //OUBLIE PAS L ASYNCTASK PD
             return null;
         }
     }
