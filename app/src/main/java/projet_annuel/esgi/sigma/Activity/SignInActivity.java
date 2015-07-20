@@ -83,6 +83,7 @@ public class SignInActivity extends Activity {
 
         String message = "";
         String session = "";
+        String idUser = "";
         int idclient = 0;
         boolean good;
 
@@ -115,6 +116,7 @@ public class SignInActivity extends Activity {
                     good = true;
                     session = jsonObj.getString("token");
                     idclient = jsonObj.getInt("user_id");
+                    idUser = jsonObj.getString("role_id");
                     Log.v("test",api_URL);
 
                 }
@@ -142,6 +144,7 @@ public class SignInActivity extends Activity {
                 SharedPreferences.Editor editor = setting.edit();
                 editor.putInt("IdClient", idclient);
                 editor.putString("Token", session);
+                editor.putString("IdRole",idUser);
                 editor.commit();
                 SignInActivity.this.finish();
             }

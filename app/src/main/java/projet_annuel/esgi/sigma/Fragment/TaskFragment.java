@@ -32,6 +32,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import projet_annuel.esgi.sigma.Modele.ListTaskAdapter;
 import projet_annuel.esgi.sigma.Modele.ListTodoAdapter;
@@ -50,7 +52,10 @@ public class TaskFragment extends Fragment {
     TextView txtLBL;
     String label;
     Button comment;
-    int position;
+    Button start;
+    int dateD;
+    int dateF;
+    float timingPast;
 
     private OnFragmentInteractionListener mListener;
 
@@ -63,6 +68,7 @@ public class TaskFragment extends Fragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(String id);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,7 +77,7 @@ public class TaskFragment extends Fragment {
         SigmaApplication app = (SigmaApplication) getActivity().getApplication();
         app.setIdTask(idTask);
         new LoadTask().execute();
-        comment = (Button)v.findViewById(R.id.button);
+        comment = (Button) v.findViewById(R.id.button);
         comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,9 +86,31 @@ public class TaskFragment extends Fragment {
                 args.putInt("Id", idTask);
                 fragment.setArguments(args);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.flContent,fragment);
+                transaction.replace(R.id.flContent, fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
+            }
+        });
+
+        start = (Button) v.findViewById(R.id.btnStart);
+        start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (start.getText().toString().equals("Start the Task")) {
+                    Date d = new Date();
+                    dateD = (int) d.getTime();
+                    Log.v("Date de base",dateD +"");
+                    start.setText("Stop the Task");
+                } else {
+                    Date d = new Date();
+                    dateF = (int) d.getTime();
+                    int result = dateF - dateD;
+                    timingPast = (float) result / (3600 * 1000);
+                    Log.v("Date de base",dateF +"");
+                    start.setText("Start the Task");
+                    new AddTimeWorked().execute();
+                }
+
             }
         });
         return v;
@@ -108,7 +136,7 @@ public class TaskFragment extends Fragment {
         protected Void doInBackground(Void... params) {
 
             SharedPreferences setting = getActivity().getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
-            String api_URL = getString(R.string.webservice).concat("/api/task/"+ idTask +"?token=token/" + setting.getString("Token", ""));
+            String api_URL = getString(R.string.webservice).concat("/api/task/" + idTask + "?token=token/" + setting.getString("Token", ""));
             HttpClient httpclient = new DefaultHttpClient();
             HttpGet httpGet = new HttpGet(api_URL);
 
@@ -121,7 +149,7 @@ public class TaskFragment extends Fragment {
                 reponse = EntityUtils.toString(httpEntity);
                 JSONObject update = new JSONObject(reponse);
                 good = update.getBoolean("success");
-                if(good){
+                if (good) {
                     JSONObject js = update.getJSONObject("payload");
                     label = js.getString("label");
 
@@ -130,7 +158,7 @@ public class TaskFragment extends Fragment {
                     lst[1] = js.getString("status");
                     lst[2] = js.getString("date_start");
                     lst[3] = js.getString("date_end");
-                    lst[4] = js.getString("estimated_time") +"h";
+                    lst[4] = js.getString("estimated_time") + "h";
 
                 }
 
@@ -145,14 +173,14 @@ public class TaskFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if(good){
-                txtLBL =(TextView) getActivity().findViewById(R.id.txtLBL);
+            if (good) {
+                txtLBL = (TextView) getActivity().findViewById(R.id.txtLBL);
                 txtLBL.setText(label);
                 Log.v("On look les valeurs", lst[0]);
-                lstInfo = (ListView)getActivity().findViewById(R.id.lst_Info);
-                lstInfo.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,lst));
+                lstInfo = (ListView) getActivity().findViewById(R.id.lst_Info);
+                lstInfo.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, lst));
                 new LoadTodo().execute();
-            }else{
+            } else {
 
             }
         }
@@ -167,7 +195,7 @@ public class TaskFragment extends Fragment {
         protected Void doInBackground(Void... params) {
 
             SharedPreferences setting = getActivity().getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
-            String api_URL = getString(R.string.webservice).concat("/api/task/"+ idTask + "/todo?token=" + setting.getString("Token", ""));
+            String api_URL = getString(R.string.webservice).concat("/api/task/" + idTask + "/todo?token=" + setting.getString("Token", ""));
             HttpClient httpclient = new DefaultHttpClient();
             HttpGet httpGet = new HttpGet(api_URL);
 
@@ -191,9 +219,9 @@ public class TaskFragment extends Fragment {
                     }
                 }
 
-            }catch(IOException e1){
+            } catch (IOException e1) {
                 e1.printStackTrace();
-            }catch(JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
             return null;
@@ -201,7 +229,7 @@ public class TaskFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute (Void aVoid){
+        protected void onPostExecute(Void aVoid) {
             if (good) {
 
                 if (lst != null) {
@@ -209,7 +237,7 @@ public class TaskFragment extends Fragment {
                     ArrayList listTodo = new ArrayList();
                     for (int i = 0; i < lst.length; i++) {
 
-                        listTodo.add(new Task(lst[i], lstDone[i], null,(idTask + ((i+1)/100) ),"" ) );
+                        listTodo.add(new Task(lst[i], lstDone[i], null, (idTask + ((i + 1) / 100)), ""));
                     }
                     lstTodo.setAdapter(new ListTodoAdapter(getActivity().getApplicationContext(), listTodo));
                 }
@@ -218,4 +246,13 @@ public class TaskFragment extends Fragment {
 
     }
 
+
+    private class AddTimeWorked extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Log.v("ALORS SA TIME",timingPast +"");
+            return null;
+        }
+    }
 }
