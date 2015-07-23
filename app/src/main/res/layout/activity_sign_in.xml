@@ -42,4 +42,17 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="94dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:background="@drawable/sigma"
+        android:layout_marginLeft="90dp"
+        android:layout_marginRight="90dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/edit_Email"
+        android:layout_marginTop="40dp" />
+
 </RelativeLayout>

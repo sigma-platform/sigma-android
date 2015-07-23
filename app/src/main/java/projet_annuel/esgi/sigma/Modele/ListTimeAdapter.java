@@ -61,8 +61,8 @@ public class ListTimeAdapter  extends BaseAdapter {
         }
 
         holder.lblView.setText(listTime.get(position).getLbl());
-        holder.tmpPView.setText("Estimé " + listTime.get(position).getTimeP() +"h");
-        holder.tmpEView.setText("Effectué " + listTime.get(position).getTimeE()+ "h");
+        holder.tmpPView.setText("Estimated : " + listTime.get(position).getTimeP() +"h");
+        holder.tmpEView.setText("Done : " + listTime.get(position).getTimeE()+ "h");
         holder.dateView.setText(listTime.get(position).getDate());
 
         return convertView;
