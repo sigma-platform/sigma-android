@@ -1,0 +1,36 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="projet_annuel.esgi.sigma.Fragment.CommentaireFragment">
+
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="534dp"
+        android:id="@+id/lstCom"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_above="@+id/editCom"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editCom"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_above="@+id/btn_Ajout"
+        android:layout_alignParentStart="true"
+        android:hint="Entrer un commentaire" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ajouter"
+        android:id="@+id/btn_Ajout"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
+</RelativeLayout>
