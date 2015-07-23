@@ -5,6 +5,8 @@ import android.util.Log;
 /**
  * Created by bastien on 17/07/2015.
  */
+
+//The model of our Comment
 public class Comment {
 
     private String description;

@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import projet_annuel.esgi.sigma.R;
-
+// Our version of the application who stock in it some global information we need
 public class SigmaApplication extends Application
 {
     private String jsonProjects;
@@ -69,7 +69,7 @@ public class SigmaApplication extends Application
         new UpdateTodo().execute();
 
     }
-
+// The class who update the value done of a Todo_ to true or false
     private class UpdateTodo extends AsyncTask<Void, Void, Void> {
 
         private String message;
@@ -91,7 +91,6 @@ public class SigmaApplication extends Application
             HttpEntity httpEntity = null;
             JSONObject update = null;
 
-            Log.v("URLBITCH",api_URL);
             HttpPut httpPut = new HttpPut(String.valueOf(url));
             List<NameValuePair> pairs = new ArrayList<NameValuePair>();
                 if(check)
@@ -125,12 +124,5 @@ public class SigmaApplication extends Application
             return null;
         }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            if(!good){
-                Log.v("Erreur ","erreur reseau la c est chelou" + message);
-            }
-
-        }
     }
 }

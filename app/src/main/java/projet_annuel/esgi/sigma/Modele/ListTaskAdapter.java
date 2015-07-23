@@ -15,6 +15,8 @@ import projet_annuel.esgi.sigma.R;
 /**
  * Created by bastien on 30/06/2015.
  */
+
+// Adapter of the list of task, which will make the layout and the data fit
 public class ListTaskAdapter extends BaseAdapter {
 
     private List<Task> listTask = null;
@@ -44,6 +46,8 @@ public class ListTaskAdapter extends BaseAdapter {
         ViewHolder holder;
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.task_layout, null);
+
+            // we synchronize the data with the layout, with the holder
             holder = new ViewHolder();
 
             holder.lblView = (TextView) convertView.findViewById(R.id.txt_libelle);

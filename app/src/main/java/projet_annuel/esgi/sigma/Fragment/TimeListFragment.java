@@ -31,7 +31,7 @@ import projet_annuel.esgi.sigma.Modele.Task;
 import projet_annuel.esgi.sigma.Modele.Time;
 import projet_annuel.esgi.sigma.R;
 
-
+// The Fragment which stock the list of time
 public class TimeListFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
@@ -103,7 +103,7 @@ public class TimeListFragment extends Fragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
-
+    // Get all the time pasted from the database
     private class LoadTime extends AsyncTask<Void, Void, Void> {
 
         private boolean good;
@@ -131,7 +131,7 @@ public class TimeListFragment extends Fragment {
                     lstDateE = new String[js.length()];
                     lstDateP = new String[js.length()];
                     lstLbl = new String[js.length()];
-
+                    //put in tabs all the data
                     for (int i = 0; i < js.length(); i++) {
                         JSONObject objectInArray = js.getJSONObject(i);
                         lstDate[i] = objectInArray.getString("date");
@@ -153,7 +153,7 @@ public class TimeListFragment extends Fragment {
         @Override
         protected void onPostExecute (Void aVoid){
             if (good) {
-
+                //create all the elements of the list
                 if (lstDateE != null) {
                     lstTime = (ListView) getView().findViewById(R.id.listView);
                     ArrayList<Time> list = new ArrayList<>();

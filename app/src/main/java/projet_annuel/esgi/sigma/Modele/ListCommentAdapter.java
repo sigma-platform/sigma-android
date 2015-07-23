@@ -14,8 +14,10 @@ import java.util.List;
 import projet_annuel.esgi.sigma.R;
 
 /**
- * Created by support on 17/07/2015.
+ * Created by bastien on 17/07/2015.
  */
+
+//The adapter of Comment which synchronize Layout and Data in the list
 public class ListCommentAdapter extends BaseAdapter {
     private List<Comment> listComment = null;
     LayoutInflater layoutInflater;

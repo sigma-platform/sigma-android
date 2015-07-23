@@ -77,7 +77,7 @@ public class SignInActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
-
+    // TAsk who connect the user and give him an id and a session
     private class IsConnected extends AsyncTask<Void, Void, Void> {
 
 
@@ -99,6 +99,7 @@ public class SignInActivity extends Activity {
             JSONObject inscription = null;
 
             try {
+                // we put the argument on the method post
                 List<NameValuePair> infoUser = new ArrayList<NameValuePair>(2);
                 infoUser.add(new BasicNameValuePair("email",((EditText) findViewById(R.id.edit_Email)).getText().toString() ));
                 infoUser.add(new BasicNameValuePair("password", ((EditText) findViewById(R.id.edit_Password)).getText().toString() ));
@@ -116,7 +117,6 @@ public class SignInActivity extends Activity {
                     good = true;
                     session = jsonObj.getString("token");
                     idclient = jsonObj.getInt("user_id");
-                    idUser = jsonObj.getString("role_id");
                     Log.v("test",api_URL);
 
                 }

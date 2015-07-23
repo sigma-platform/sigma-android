@@ -43,6 +43,7 @@ public class NavigationDrawerFragment extends DrawerLayout {
         super(context);
     }
 
+    //We set up the NavDrawer with the list which will contain the menu, the toolbar
     public void setupDrawerConfiguration(ListView drawerListView, Toolbar drawerToolbar, int drawerItemRes, int drawerContainerRes) {
 
         drawerNavItems = new ArrayList<NavigationDrawerFragment.FragmentNavItem>();
@@ -67,7 +68,7 @@ public class NavigationDrawerFragment extends DrawerLayout {
         drawerNavItems.add(new FragmentNavItem(windowTitle, fragmentClass));
     }
 
-
+// the function which will move the user to the action he decided when he clicked on an item from the menu
     public void selectDrawerItem(int position) {
         ContentActivity act = (ContentActivity) getActivity();
         if(position == 0){
@@ -86,6 +87,7 @@ public class NavigationDrawerFragment extends DrawerLayout {
             try {
                 fragment = navItem.getFragmentClass().newInstance();
                 Bundle args = new Bundle();
+                args.putInt("role",act.getRoleFromPosition(position-2));
                 args.putInt("Id",act.getIdFromPosition(position - 2));
                 fragment.setArguments(args);
             } catch (Exception e) {
@@ -129,7 +131,7 @@ public class NavigationDrawerFragment extends DrawerLayout {
             selectDrawerItem(position);
         }
     }
-
+// the private classe which represent the data we need for a line of the menu
     private class FragmentNavItem {
         private Class<? extends Fragment> fragmentClass;
         private String title;

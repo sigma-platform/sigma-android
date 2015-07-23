@@ -30,7 +30,7 @@ import projet_annuel.esgi.sigma.R;
 import projet_annuel.esgi.sigma.Modele.SigmaApplication;
 import projet_annuel.esgi.sigma.Modele.TaskDelegate;
 
-
+//the first activity started by the application
 public class MainActivity extends Activity implements TaskDelegate {
 
     private String jsonProject;
@@ -43,24 +43,17 @@ public class MainActivity extends Activity implements TaskDelegate {
         setContentView(R.layout.activity_main_appbar);
 
         SharedPreferences setting = getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
-        if(setting.getString("Token","").equals("")) {
-            Log.v("Ontestsaomoin??",setting.getString("Token",""));
+        if(setting.getString("Token","").equals("") ) {
             Intent intent = new Intent(MainActivity.this, SignInActivity.class);
             startActivity(intent);
             connected = true;
         }
         else{
-            Log.v("Ontestsaomoin??",setting.getString("Token",""));
             new LoadProjectsData(this).execute();
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(connected)
-            new LoadProjectsData(this).execute();
-    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -99,13 +92,14 @@ public class MainActivity extends Activity implements TaskDelegate {
 
         return super.onOptionsItemSelected(item);
     }
-
+    // Task who load all the list of project
     private class LoadProjectsData extends AsyncTask<Void, Void, Void> {
 
         boolean good;
-        String message="";
+        String message = "";
 
         private TaskDelegate delegate;
+
         public LoadProjectsData(TaskDelegate delegate) {
             this.delegate = delegate;
         }
@@ -113,26 +107,24 @@ public class MainActivity extends Activity implements TaskDelegate {
         @Override
         protected Void doInBackground(Void... params) {
             SharedPreferences setting = getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
-            String api_URL = getString(R.string.webservice).concat("/api/project/user/?token=" +setting.getString("Token","") );
+            String api_URL = getString(R.string.webservice).concat("/api/project/user/?token=" + setting.getString("Token", ""));
             HttpClient httpclient = new DefaultHttpClient();
             HttpGet httpGet = new HttpGet(api_URL);
-            Log.v("test", api_URL);
             String reponse = null;
             HttpEntity httpEntity = null;
             JSONObject listJSON = null;
 
             try {
                 HttpResponse response = httpclient.execute(httpGet);
-                httpEntity  = response.getEntity();
+                httpEntity = response.getEntity();
                 reponse = EntityUtils.toString(httpEntity);
 
 
                 listJSON = new JSONObject(reponse);
                 good = listJSON.getBoolean("success");
-                if(good){
+                if (good) {
                     jsonProject = reponse;
-                }
-                else {
+                } else {
                     message = listJSON.getString("error");
                 }
 
@@ -149,132 +141,17 @@ public class MainActivity extends Activity implements TaskDelegate {
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            delegate.taskCompletionResult(good);
-        }
-    }
-
-    private class SignOut extends AsyncTask<Void, Void, Void> {
-
-
-        String message = "";
-        boolean good;
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-
-
-            HttpClient httpclient = new DefaultHttpClient();
-
-            SharedPreferences setting = getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
-            String api_URL = getString(R.string.webservice).concat("/api/auth/logout?token=" +setting.getString("Token","") );
-            HttpGet httpGet = new HttpGet(api_URL);
-
-            String reponse = null;
-            HttpEntity httpEntity = null;
-            JSONObject signout = null;
-
-            try {
-                HttpResponse response = httpclient.execute(httpGet);
-                httpEntity  = response.getEntity();
-                reponse = EntityUtils.toString(httpEntity);
-
-
-                signout = new JSONObject(reponse);
-                good = signout.getBoolean("success");
-                message = signout.getString("error");
-
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-
         protected void onPostExecute(Void aVoid) {
             if(good) {
-                SharedPreferences setting = getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = setting.edit();
-                editor.putInt("IdClient", 0);
-                editor.putString("Token", "");
-                editor.commit();
-                Intent intent = new Intent(MainActivity.this,SignInActivity.class);
+                SigmaApplication app = (SigmaApplication) getApplication();
+                app.setJsonProjects(jsonProject);
+                Intent intent = new Intent(MainActivity.this, ContentActivity.class);
                 startActivity(intent);
             }
-            else{
-                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-                alertDialogBuilder.setMessage(message);
-
-                alertDialogBuilder.setPositiveButton("ok",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                            }
-                        });
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
+            else {
+                Intent intent = new Intent(MainActivity.this, SignInActivity.class);
+                startActivity(intent);
             }
-        }
-
-    }
-
-
-    private class LoadTasksData extends AsyncTask<Void, Void, Void> {
-
-        boolean good;
-        String message="";
-        JSONArray listData = null;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            SharedPreferences setting = getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
-            //modifier l api pour la mettre avec les liste taches
-            String api_URL = getString(R.string.webservice).concat("/api/project/user/?token=" +setting.getString("Token","") );
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(api_URL);
-
-            String reponse = null;
-            HttpEntity httpEntity = null;
-            JSONObject listJSON = null;
-
-            try {
-                HttpResponse response = httpclient.execute(httpGet);
-                httpEntity  = response.getEntity();
-                reponse = EntityUtils.toString(httpEntity);
-
-
-                listJSON = new JSONObject(reponse);
-                good = listJSON.getBoolean("success");
-                if(good){
-                    jsonProject = reponse;
-                }
-                else {
-                    message = listJSON.getString("error");
-                }
-
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            //lancer le fragment TaskList et mettre en parametre la string contenant tout le json
-
         }
     }
 }

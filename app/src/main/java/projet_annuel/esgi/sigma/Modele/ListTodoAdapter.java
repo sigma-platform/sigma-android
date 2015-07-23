@@ -16,8 +16,10 @@ import java.util.List;
 import projet_annuel.esgi.sigma.R;
 
 /**
- * Created by support on 16/07/2015.
+ * Created by bastien on 16/07/2015.
  */
+
+// This is the class who synchronize Todos data and the layout in the list
 public class ListTodoAdapter extends BaseAdapter {
 
     private List<Task> listTask = null;
@@ -47,6 +49,8 @@ public class ListTodoAdapter extends BaseAdapter {
         return position;
     }
 
+
+    //same as all the precedent adapter
     public View getView(final int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
         if (convertView == null) {

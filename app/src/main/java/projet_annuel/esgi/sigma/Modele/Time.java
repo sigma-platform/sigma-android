@@ -3,6 +3,8 @@ package projet_annuel.esgi.sigma.Modele;
 /**
  * Created by bastien on 16/07/2015.
  */
+
+// The modele who fit with the representation of a Time in our database
 public class Time {
 
     private String lbl;

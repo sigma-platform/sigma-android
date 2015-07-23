@@ -39,23 +39,23 @@ import projet_annuel.esgi.sigma.Fragment.TimeListFragment;
 import projet_annuel.esgi.sigma.Modele.SigmaApplication;
 import projet_annuel.esgi.sigma.R;
 
-
+//Class which contain the navigation drawer and all the fragment
 public class ContentActivity extends ActionBarActivity  implements CommentaireFragment.OnFragmentInteractionListener,TaskListFragment.OnFragmentInteractionListener,TaskFragment.OnFragmentInteractionListener,TimeListFragment.OnFragmentInteractionListener {
 
     public NavigationDrawerFragment dlDrawer;
     private String[] listLBL = null;
     private Integer[] listId = null;
-    private int idTask;
-    private int idTodo;
+    private Integer[] listRole = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content);
-
+        // we get the json text
         SigmaApplication app = (SigmaApplication) getApplication();
         String tab = app.getJsonProjects();
         JSONObject update = null;
+        // we instanciate the navDrawer
         Toolbar toolbar = (Toolbar) findViewById(R.id.mp_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -67,16 +67,18 @@ public class ContentActivity extends ActionBarActivity  implements CommentaireFr
         dlDrawer.addNavItem("Deconnexion","Deconnexion",null);
         dlDrawer.addNavItem("Historique Travail","Historique", TimeListFragment.class);
         try {
+            //here we parse the json
             update = new JSONObject(tab);
             JSONArray jsonArray = update.getJSONArray("payload");
             listId = new Integer[jsonArray.length()];
             listLBL = new String[jsonArray.length()];
+            listRole = new Integer[jsonArray.length()];
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject objectInArray = jsonArray.getJSONObject(i);
                 listLBL[i] = objectInArray.getString("name");
                 listId[i] =  objectInArray.getInt("id");
-                Log.v("EUH TT EST",listId[i]+"");
+                listRole[i] = objectInArray.getJSONObject("pivot").getInt("role_id");
                 dlDrawer.addNavItem(listLBL[i],listLBL[i], TaskListFragment.class);
             }
 
@@ -88,12 +90,15 @@ public class ContentActivity extends ActionBarActivity  implements CommentaireFr
             e.printStackTrace();
         }
 
-
-
     }
-
+// return the ID of the project at the position
     public int getIdFromPosition(int position){
         return listId[position];
+    }
+
+// return the role of the user for the project at the position
+    public int getRoleFromPosition(int position){
+        return listRole[position];
     }
 
     @Override
@@ -117,7 +122,7 @@ public class ContentActivity extends ActionBarActivity  implements CommentaireFr
 
         return super.onOptionsItemSelected(item);
     }
-
+// function who start the task which logout the user
     public void deconnexion(){
         new SignOut().execute();
     }
@@ -132,7 +137,7 @@ public class ContentActivity extends ActionBarActivity  implements CommentaireFr
     public void onFragmentInteraction(Uri uri) {
 
     }
-
+// Class who log out the user
     private class SignOut extends AsyncTask<Void, Void, Void> {
 
 

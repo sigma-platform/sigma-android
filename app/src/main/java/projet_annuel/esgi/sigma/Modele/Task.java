@@ -3,6 +3,8 @@ package projet_annuel.esgi.sigma.Modele;
 /**
  * Created by bastien on 30/06/2015.
  */
+
+// The model of our Task representation
 public class Task {
     public String getNom() {
         return nom;

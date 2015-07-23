@@ -36,7 +36,7 @@ import projet_annuel.esgi.sigma.Modele.Task;
 import projet_annuel.esgi.sigma.Modele.TaskDelegate;
 import projet_annuel.esgi.sigma.R;
 
-
+// Class loading the list of tasks of a single project
 public class TaskListFragment extends Fragment {
 
     private String TabDateF[];
@@ -45,7 +45,7 @@ public class TaskListFragment extends Fragment {
     private String TabVers[];
     private Float TabTmp[];
     private Integer TabId[];
-    private int positionT;
+    private int role;
 
     private OnFragmentInteractionListener mListener;
     private int projectId;
@@ -65,12 +65,18 @@ public class TaskListFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (getArguments() != null) {
+            //we get the arguments here
             projectId = getArguments().getInt("Id");
+            role = getArguments().getInt("role");
+
         }
+        //we start the asynctask who load the list
         new LoadTaskList().execute();
         View v = inflater.inflate(R.layout.fragment_task_list, container, false);
         return v;
@@ -106,13 +112,11 @@ public class TaskListFragment extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
-
+// Task who get the list of tasks
     private class LoadTaskList extends AsyncTask<Void,Void,Void>{
 
         boolean good;
         String message="";
-
-        private TaskDelegate delegate;
         public LoadTaskList() {
         }
 
@@ -135,7 +139,7 @@ public class TaskListFragment extends Fragment {
                 good = update.getBoolean("success");
                 if(good){
                     JSONArray list = update.getJSONArray("payload");
-
+                    // init all the tab
                     TabLib = new String[list.length()];
                     TabDateD = new String[list.length()];
                     TabDateF = new String[list.length()];
@@ -143,6 +147,7 @@ public class TaskListFragment extends Fragment {
                     TabId = new Integer[list.length()];
                     TabVers = new String[list.length()];
 
+                    //put the good value in it
                     for (int i = 0; i < list.length(); i++) {
                         JSONObject objectInArray = list.getJSONObject(i);
                         TabId[i] = objectInArray.getInt("id");
@@ -179,13 +184,14 @@ public class TaskListFragment extends Fragment {
                     if(TabVers.length!=0)
                         testeur = TabVers[0];
                     for (int i = 0; i < TabDateD.length; i++) {
+                        //if good we put a separator else we dont
                         if(testeur.equals(TabVers[i]) && i !=0)
                             listTask.add(new Task(TabLib[i],TabDateD[i],TabDateF[i],TabTmp[i],""));
                         else
                            listTask.add(new Task(TabLib[i],TabDateD[i],TabDateF[i],TabTmp[i],TabVers[i]));
                         testeur = TabVers[i];
                     }
-
+                    //set the adapter of the list
                     lv.setAdapter(new ListTaskAdapter(getActivity().getApplicationContext(), listTask));
                     lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override

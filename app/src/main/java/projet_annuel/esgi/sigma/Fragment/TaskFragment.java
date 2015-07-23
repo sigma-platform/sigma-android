@@ -56,7 +56,7 @@ import projet_annuel.esgi.sigma.R;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link Fragment} Class who represent a task
  */
 public class TaskFragment extends Fragment {
     private int idTask;
@@ -113,6 +113,8 @@ public class TaskFragment extends Fragment {
                 }
             }
         });
+
+        //button who go to the commentfragment
         comment = (Button) v.findViewById(R.id.button);
         comment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +129,7 @@ public class TaskFragment extends Fragment {
                 transaction.commit();
             }
         });
-
+        // the button who start the task time
         start = (Button) v.findViewById(R.id.btnStart);
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,7 +182,7 @@ public class TaskFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
-
+    // Load the data from the task
     private class LoadTask extends AsyncTask<Void, Void, Void> {
 
         private boolean good;
@@ -239,7 +241,7 @@ public class TaskFragment extends Fragment {
             }
         }
     }
-
+    // task who get all the todos from the database
     private class LoadTodo extends AsyncTask<Void, Void, Void> {
         private boolean good;
         private String[] lst;
@@ -300,28 +302,22 @@ public class TaskFragment extends Fragment {
 
     }
 
-
+    // Task who put the time pasted on the BD
     private class AddTimeWorked extends AsyncTask<Void, Void, Void> {
-
         private boolean good;
-
         @Override
         protected Void doInBackground(Void... params) {
             DefaultHttpClient httpclient = new DefaultHttpClient();
-
+    //get the url
             SharedPreferences setting = getActivity().getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
             String api_URL = getString(R.string.webservice).concat("/api/time?token=" + setting.getString("Token", ""));
-
-
             try {
-
                 String reponse = null;
                 HttpEntity httpEntity = null;
                 Date actuelle = new Date();
                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
                 JSONObject ajout = null;
-
+    //put parameters
                 HttpPost httpPost = new HttpPost(api_URL);
                 List<NameValuePair> pairs = new ArrayList<NameValuePair>();
                 pairs.add(new BasicNameValuePair("date", dateFormat.format(actuelle)));
@@ -338,7 +334,7 @@ public class TaskFragment extends Fragment {
                 httpEntity = response.getEntity();
                 reponse = EntityUtils.toString(httpEntity);
 
-
+        // get the jsonobject
                 ajout = new JSONObject(reponse);
                 good = ajout.getBoolean("success");
                 if (!good)
@@ -370,7 +366,7 @@ public class TaskFragment extends Fragment {
             }
         }
     }
-
+    // The Task who add a Tod-o in the database
     private class AddTodo extends AsyncTask<Void, Void, Void> {
 
         private boolean good;
