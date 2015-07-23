@@ -2,7 +2,9 @@ package projet_annuel.esgi.sigma.Fragment;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,24 +18,35 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import projet_annuel.esgi.sigma.Modele.ListTaskAdapter;
 import projet_annuel.esgi.sigma.Modele.ListTodoAdapter;
@@ -52,10 +65,11 @@ public class TaskFragment extends Fragment {
     TextView txtLBL;
     String label;
     Button comment;
+    Button add;
     Button start;
-    int dateD;
     int dateF;
     float timingPast;
+    EditText todoTxt;
 
     private OnFragmentInteractionListener mListener;
 
@@ -79,6 +93,26 @@ public class TaskFragment extends Fragment {
         SigmaApplication app = (SigmaApplication) getActivity().getApplication();
         app.setIdTask(idTask);
         new LoadTask().execute();
+
+        todoTxt = (EditText) v.findViewById(R.id.editTodo);
+        add = (Button) v.findViewById(R.id.btn_AJoutTodo);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (todoTxt.getText().toString() != "") {
+                    new AddTodo().execute();
+                } else {
+                    AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+                    adb.setTitle("Error");
+                    adb.setMessage("You need to write something in your todo");
+                    adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    adb.show();
+                }
+            }
+        });
         comment = (Button) v.findViewById(R.id.button);
         comment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,36 +136,34 @@ public class TaskFragment extends Fragment {
                 if (start.getText().toString().equals("Start the Task")) {
                     Date d = new Date();
                     SharedPreferences.Editor editor = setting.edit();
-                    editor.putInt("dateD",(int)d.getTime());
+                    editor.putInt("dateD", (int) d.getTime());
                     editor.putInt("IdTask", idTask);
                     editor.commit();
-                    Log.v("EUH WHAT", setting.getInt("IdTask",0 )+ "");
+
                     start.setText("Stop the Task");
                 } else {
                     Date d = new Date();
                     dateF = (int) d.getTime();
-                    int result = dateF - setting.getInt("dateD",0);
+                    int result = dateF - setting.getInt("dateD", 0);
                     timingPast = (float) result / (3600 * 1000);
-                    Log.v("Date de base",dateF +"");
+                    Log.v("Date de base", dateF + "");
                     start.setText("Start the Task");
                     SharedPreferences.Editor editor = setting.edit();
-                    editor.putInt("dateD",0);
-                    editor.putInt("IdTask",0);
+                    editor.putInt("dateD", 0);
+                    editor.putInt("IdTask", 0);
                     editor.commit();
                     new AddTimeWorked().execute();
                 }
 
 
-
             }
         });
 
-        if(setting.getInt("IdTask",0) != idTask  && setting.getInt("IdTask",0) != 0) {
-            Log.v("Condtion",setting.getInt("IdTask",0 ) +"");
+        if (setting.getInt("IdTask", 0) != idTask && setting.getInt("IdTask", 0) != 0) {
+            Log.v("Condtion", setting.getInt("IdTask", 0) + "");
             start.setVisibility(View.GONE);
-        }
-        else{
-            if(setting.getInt("IdTask",0) == idTask){
+        } else {
+            if (setting.getInt("IdTask", 0) == idTask) {
                 start.setText("Stop the Task");
             }
         }
@@ -271,11 +303,142 @@ public class TaskFragment extends Fragment {
 
     private class AddTimeWorked extends AsyncTask<Void, Void, Void> {
 
+        private boolean good;
+
         @Override
         protected Void doInBackground(Void... params) {
-            Log.v("ALORS SA TIME",timingPast +"");
-            //OUBLIE PAS L ASYNCTASK PD
+            DefaultHttpClient httpclient = new DefaultHttpClient();
+
+            SharedPreferences setting = getActivity().getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
+            String api_URL = getString(R.string.webservice).concat("/api/time?token=" + setting.getString("Token", ""));
+
+
+            try {
+
+                String reponse = null;
+                HttpEntity httpEntity = null;
+                Date actuelle = new Date();
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+                JSONObject ajout = null;
+
+                HttpPost httpPost = new HttpPost(api_URL);
+                List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+                pairs.add(new BasicNameValuePair("date", dateFormat.format(actuelle)));
+                pairs.add(new BasicNameValuePair("time", timingPast + ""));
+                pairs.add(new BasicNameValuePair("task_id", idTask + ""));
+                pairs.add(new BasicNameValuePair("user_id", setting.getInt("IdClient", 0) + ""));
+
+
+                httpPost.setHeader(HTTP.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=UTF-8");
+                httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
+
+                httpPost.setEntity(new UrlEncodedFormEntity(pairs));
+                HttpResponse response = httpclient.execute(httpPost);
+                httpEntity = response.getEntity();
+                reponse = EntityUtils.toString(httpEntity);
+
+
+                ajout = new JSONObject(reponse);
+                good = ajout.getBoolean("success");
+                if (!good)
+                    Log.v("CESPASKADO", ajout.getString("error"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+
+            if (good) {
+                AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+                adb.setTitle("Succes");
+                adb.setMessage("Your time has been update with succes");
+                adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                adb.show();
+            }
+        }
+    }
+
+    private class AddTodo extends AsyncTask<Void, Void, Void> {
+
+        private boolean good;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+        DefaultHttpClient httpclient = new DefaultHttpClient();
+
+        SharedPreferences setting = getActivity().getSharedPreferences(getString(R.string.PREFS_DATA), Context.MODE_PRIVATE);
+        String api_URL = getString(R.string.webservice).concat("/api/todo?token=" + setting.getString("Token", ""));
+
+
+        try {
+
+            String reponse = null;
+            HttpEntity httpEntity = null;
+
+            JSONObject ajout = null;
+
+            HttpPost httpPost = new HttpPost(api_URL);
+            List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+            pairs.add(new BasicNameValuePair("done", 0+""));
+            pairs.add(new BasicNameValuePair("label", todoTxt.getText().toString()));
+            pairs.add(new BasicNameValuePair("task_id", idTask + ""));
+
+
+            httpPost.setHeader(HTTP.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=UTF-8");
+            httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
+
+            httpPost.setEntity(new UrlEncodedFormEntity(pairs));
+            HttpResponse response = httpclient.execute(httpPost);
+            httpEntity = response.getEntity();
+            reponse = EntityUtils.toString(httpEntity);
+
+
+            ajout = new JSONObject(reponse);
+            good = ajout.getBoolean("success");
+            if (!good)
+                Log.v("CESPASKADO", ajout.getString("error"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+
+        if (good) {
+          todoTxt.setText("");
+          new LoadTodo().execute();
+        }
+        else {
+            AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+            adb.setTitle("Error");
+            adb.setMessage("Problem with the database or with your session id");
+            adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            adb.show();
+        }
+    }
     }
 }
